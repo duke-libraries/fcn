@@ -1,0 +1,5 @@
+AuthName "FCN Supervisor Area" 
+AuthType Basic 
+AuthUserFile [Path to your AuthUserFile] 
+AuthGroupFile /dev/null 
+require valid-user

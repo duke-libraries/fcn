@@ -1,0 +1,139 @@
+Fantasy Collecting 0.1
+----------------------
+Documentation - Updated 9/1/2013
+
+* What is this?
+
+Fantasy Collecting (FC) is a classroom teaching and research tool that uses the activity of art markets to help students learn 
+about art. In the process, students experience firsthand how promotion and trading influence an artwork's market value.  
+
+For more information about Fantasy Collecting, please see:
+
+  http://researchcommons.library.duke.edu/can-a-game-change-how-we-learn-about-art/
+
+Gameplay documentation is available as an instructional video on YouTube.  We've also posted videos that explain the
+design and pedagogical goals behind Fantasy Collecting:
+
+  https://www.youtube.com/playlist?list=PLCtm1VP4HzgQhQtyyzM0Kdh6IiQ7F8ZrX
+
+Fantasy Collecting was developed at Duke University by Katherine Jentleson and William Shaw, with invaluable input and 
+ideas from Patrick Herron.  The Fantasy Collecting project, part of the Duke Art, Law, and Markets Initative (DALMI), 
+was funded by a grant from Duke's Humanities Writ Large initiative (http://humanitieswritlarge.duke.edu/).  Video materials
+were created by Katherine Jentleson and edited for publication by Robert Zimmerman <robert.zimmerman@duke.edu>.  
+
+If you have questions or comments about the game, please contact William Shaw <william.shaw@duke.edu>.  
+
+
+* What is the status of this software?
+
+FC is currently alpha software meant to demonstrate a concept.  It's a sketch that indicates what a fully-developed game might
+look like, but it is stable, and it has been successfully deployed in classroom settings.  However, its short and dynamic
+development process means that we left many avenues unexplored, and time and resource limits dictated that we leave out some 
+nice features.  If you're interested in doing development work on Fantasy Collecting, you might consider working on the 
+following areas:
+
+	+ Realtime auctions.  During the course of active gameplay, we decided to switch from a "live" auction model (similar
+	  to what you might encounter at, say, Sotheby's) to an eBay-style auction listing format.  Our reasoning was that
+	  students seemed slow to engage with the live-auction format, the administrative overhead took up too much class
+	  time, and it was difficult to encourage participation with pre-scheduled auctions outside of class time.  The eBay
+	  listing format was much more successful, but we've left in some of the live auction code in case anyone wants to
+	  revive it.  
+
+	+ Supporting multiple game instances per server.  Initially, we envisioned supporting multiple active games on a single
+	  installation of the software -- hence the numerous references to "gameinstance" columns and variables throughout
+	  the code.  Along the way, we shelved this feature, but as with realtime auctions, some of the code for it is still
+	  present.  Reimplementing this feature would be a useful project for anyone interested in supporting multiple discrete
+	  game instances (as opposed to having many groups/classes of players use the same market space).   
+
+	+ Support for Internet Explorer and/or valid XHTML across all game states.  Several game states render incorrectly in
+	  Internet Explorer.  Due to time constraints, we made no effort to build workarounds.  In related matters, game states
+	  that are not rendered in valid XHTML/Transitional could use an update to bring them into standards compliance.  
+
+	+ Migration to a PHP framework / use of more generic database functions.  For the sake of convenience, some of the
+	  data store functions in FC use features that are specific to MySQL.  We could achieve greater portability by 
+	  using the more generic database access functions that are built into PHP.  Likewise, FC does not rely on any
+	  PHP framework (Zend, etc.).  Initially, this design choice was intended to facilitate lightweight code and ad hoc
+	  development, but the game would probably benefit (in terms of code cleanliness, at minimum) from the use of a
+	  more robust framework.  
+
+	+ Completing features that we didn't have time to implement: curveballs (random events, either detrimental or
+	  beneficial to players) and more robust dashboard analytics come to mind, but the administrative interface could
+	  also use attention (to a more modular design and improved ease of use/code cleanliness, for example).  
+	  Among those features are improved player levels/badges.  The Game Genie account (in-game superuser) and 
+	  the supervisor page should have better-integrated functionality, and the levels system should support more 
+	  than just two levels (regular player and connoisseur).  
+
+The purpose of each file included in this archive is outlined in a plain text file ("FILES") located in the root directory 
+of the software.  
+
+
+* Maintenance
+
+Because the creation of Fantasy Collecting was a grant-funded, one-off project, there will be no substantial updates from 
+the original developers.  This documentation may become more fully developed in time, but for now, the main source of gameplay
+information is the video playlist linked above.   
+
+
+* What are the system requirements / dependencies?
+
+Fantasy Collecting requires a standard LAMP stack (Linux/Unix, Apache, MySQL 5.0+, PHP 5.x).  It's entirely possible that it
+will work on other systems, but it was built on this software and has been extensively tested on it.  Certain database operations 
+are specific to MySQL; you will need to modify them (e.g., rowCount( )) if you want to use a different DBMS.   
+
+Fantasy Collecting depends on a few external libraries and tools to do its work:
+
+	+ jQuery 1.8+
+	+ jQuery UI 1.9+
+	+ Shadowbox.js (bundled)
+	+ Moxiecode Systems AB Plupload (bundled) <http://www.moxiecode.com/products_plupload.php>.
+
+The jQuery libraries are automatically loaded with the Google Loader.  The use of external libraries is governed by their 
+respective licenses; please refer to their documentation for details.  
+
+* How do I set up Fantasy Collecting?
+
+The simplest way to set up Fantasy Collecting is to place the entire source tree in a publicly-accessible Web directory
+on your server.  You'll need to have PHP enabled.  Edit game/functions.php and change the value of $FCN_ROOT to the
+absolute path of Fantasy Collecting (for example, if you've placed the game in /var/www/html/fcn/, specify that complete
+path in the declaration of $FCN_ROOT).  
+
+To set up the database for Fantasy Collecting, you will need to create a database named "fcn" and a MySQL user account 
+to own FC data.  Grant the user account all privileges on FCN (Consult MySQL documentation for instructions.)  
+Once you have your username and password, log into the database via the command-line client and enable the MySQL
+event scheduler (this feature is *required* for critical parts of Fantasy Collecting):
+
+	SET GLOBAL event_scheduler = ON;
+
+Next, create the necessary tables for Fantasy Collecting by executing this command from the Fantasy Collecting root
+directory:
+
+	mysql -u [your username] --password=[your password] fcn < fcn.sql
+
+Finally, edit the .htaccess file in game/supervisor/.  You will need to create an .htpasswd file to restrict access to the
+supervisor page; a useful tool for this task is Andreas Gehrke's htpasswd generator, which is available at 
+http://www.htaccesstools.com/htpasswd-generator/.  
+
+Using a Web browser, you can now navigate to the directory where you installed Fantasy Collecting and create a user account.
+The default behavior of Fantasy Collecting is to treat the lowest user ID (that is, the first player account created) as the
+"game genie" account.  Game Genie is a game supervisor who is not always visible to other players--for example, when proposing
+trades.  She or he has some in-game privileges that complement the features of the supervisor page.  
+
+* What license governs the use of this software? 
+
+This software is made available under the terms of the MIT/X11 open source license.
+        
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+and associated documentation files (the "Software"), to deal in the Software without restriction, 
+including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial 
+portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT 
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.    
+

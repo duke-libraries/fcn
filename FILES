@@ -1,0 +1,184 @@
+fcn.sql				(Database skeleton)
+ * A dump of an empty FC database.  Use this file to set up the initial data stores (see 
+   README).
+
+index.php			(Form)
+ * Landing page.  Display a login form and pass its contents to login.php.
+
+login.php			(Form processor -- index.php)
+ * Handle login attempts. 
+
+logout.php			(Helper)
+ * End the user's session.
+
+signup.php			(Form)
+ * Allow new users to sign up for Fantasy Collecting accounts.  Data from this form is
+   passed to signupProcessor.php.
+
+signupProcessor.php		(Form processor -- signup.php)
+ * Create new users based on the data supplied from signup.php. 
+
+game/addDescription.php		(Form)
+ * Allows players to add a description to a work in their collection.  Input handled by
+   descriptionProcessor.php.
+
+game/addTombstone.php		(Form)
+ * Allows players to add a tombstone (artist name, birth-death dates) to a 
+   work in their collection.  Input handled by tombstoneProcessor.php.
+
+game/aucval.php			(Helper/JSON generator)
+ * In the live auction system, this script is called by client-side polling
+   every couple seconds to update the high bidder, time of last bid, and bid amount in
+   JSON format.    
+
+game/bidPlace.php		(Form processor -- from marketplace.php)
+ * form processor for bids placed in an auction.  Called from form(s) on marketplace.php.
+    The output of this script is displayed in a modal dialog box on marketplace.php after 
+    a bid is submitted.
+
+game/bug.php			(Form)
+ * Allows players to submit bug reports or suggestions from anywhere in the game.  Called
+   from topBar.php (menu bar included on every page).  Output handled by bugProcessor.php.
+
+game/bugProcessor.php		(Form processor -- from bug.php)
+ * Receive input from bug.php and dump it in the bugs table.
+
+game/buyBIN.php			(Form processor -- from marketplace.php)
+ * Place a 'buy it now' bid for an auction.  This should probably be folded into
+    bidPlace.php.  Output from this script is displayed in a shadowbox on the marketplace page.
+
+game/ca.php			(Form processor -- from home.php)
+ * The cryptic name is short for 'challenge approver.'  This script is called from home.php;
+    it's available only to players who have obtained coinisseur status, and it allows them to 
+    validate other players' tombstone submissions.  They earn 10 FCGs for doing so.
+
+game/collections.php		(Major game state)
+ * This page displays a marquee image for each collection currently active in the game and
+    allows players to click through to view other players' collections.
+
+game/createClassified.php	(Form)
+  * Despite the name (an artifact of when classified ads were part of FCN), this script actually 
+     allows users to create an auction listing.  It's a form called from marketplace.php
+     and processed by postClassified.php.  
+
+game/db.php			(Include)
+  * A few lines of code to set up a connection to MySQL.  Included in other scripts as a convenience
+     function.
+
+game/deleteClassified.php	(Form processor -- from marketplace.php)
+  * Again, despite the misleading name, this is the script that's called when a user stops an auction 
+     in progress.  Called from button-clicks in marketplace.php, "Manage Auctions" tab.
+
+game/descriptionProcessor.php	(Form processor -- addDescription.php)
+  * Form processor for submitting work descriptions.  Called only from addDescription (the form
+     that also edits existing descriptions of works).  
+
+game/functions.php		(Include)
+ * Library of convenience functions, constants, etc. that are used throughout the game.
+
+game/home.php			(Major game state)
+ * Landing point after login.  Displays newsfeed, market data, and navigation paths to all other
+    parts of the game.
+
+game/img.php			(Helper)
+ * Display artworks in the game, given their database id (primary key of works table) as a URL param.
+    The reason this script exists at all is that it's useful for masking filenames that might reveal
+    information players are supposed to figure out on their own (artist, work title, date, etc.).
+
+game/jewel.php			(Include)
+ * Generates the right-hand notification div that appears on every major game state page.
+
+game/logout.php			(Helper)
+ * Ends user session.
+
+game/love.php			(Form processor -- from userCollection.php)
+ * Toggles whether a player loves a specific work (i.e., updates the likes table).
+
+game/mailCompose.php		(Form)
+ * Mail form used for starting new message threads.  Called by clicking the compose icon in mail.php.
+
+game/mail.php			(Major game state)
+ * The in-game message center.  Depends on msgThread.php to display conversations; new threads are 
+    created with mailCompose.php; and replies are passed directly from mail.php -> mailProcessor.php.
+
+game/mailProcessor.php		(Form processor -- mailCompose.php, mail.php)
+ * Accept input from mail form and deliver messages to players. 
+
+game/marketplace.php		(Major game state)
+ * The marketplace is the hub for all transactions in the game.  Here, players can review, accept, or
+    reject proposed trades; cancel trades that they've initiated; bid on works being auctioned; and 
+    manage their own auctions.
+
+game/msgThread.php		(Helper)
+ * Generates HTML for displaying a conversation between two users.  Called by mail.php.
+
+game/postClassified.php		(Form processor -- createClassified.php)
+ * Posts an auction listing.
+
+game/stream.php			(Helper)
+ * Generates HTML of notifications that have been created since jewel.php was last loaded.  Called
+    via JavaScript polling from jewel.php.  
+
+game/tombstoneProcessor.php	(Form processor -- addTombstone.php)
+ * Inserts new tombstone guesses into the database.
+
+game/topBar.php			(Include)
+ * PHP/HTML navigation bar that appears at the top of major game states.
+
+game/tradeApproval.php		(Form processor -- from buttons on marketplace.php)
+ * Updates trade table to indicate approved/rejected status and handles the actual swapping of art,
+    currency, etc.  
+
+game/traceProcessor.php		(Form 
+
+game/trader.php			(Form)
+ * Display the trade table.  This is the mechanism by which users propose trades with one another.
+
+game/userCollection.php		(Major game state)
+ * Display one user's collection as a grid of images linked to workview.php.  Includes a button linking to trader.php 
+    (allows users to propose trades with one another). 
+
+game/userHome.php		(Major game state)
+ * Collection page for the currently logged-in user.  This really shouldn't be a separate script from userCollection.php;
+    the only real differences are that the active user has "add tombstone/add description" links below each image in
+    his or her collection.  Future improvement: fold userHome into userCollection
+
+game/workview.php		(Helper)
+ * Usually opened in a shadowbox as a modal overlay, workview.php is available from many places in the game.  
+    It displays an enlargement of the image in question, its description (if a user has created one), and
+    its provenance in the current game.
+
+game/factories/dataFactory.php	(Helper)
+ * Generates JSON data describing all trades in the game.  Used in dashboard @ home.php.
+
+ 
+game/factories/fcgRankingFactory.php	(Helper)
+ * Generates list of players ordered by total score (descending).  Used in dashboard @ home.php.
+
+game/factories/loveFactory.php	(Helper)
+ * generate the overlay image that shows whether a player has loved a work.  Called via sentiment.js on 
+   userCollection.php.
+
+game/factories/mostLoveFactory.php	(Helper)
+ * generate the list of most "loved" works in the game for display on the dashboard (home.php).
+
+game/resources/sentiment.js		(Helper)
+ * Handle mouseover and click events for the sentiment (heart) divs in userCollection.php.
+
+game/resources/:
+ * fcn.css: stylesheet for the game.
+ * icons: game icons in various sizes.  The icons are from a set called Iconic by P.J. Onori (www.github.com/somerandomdude).
+ * plupload: drag and drop file upload plugin for the game supervisor page.
+ * img: main image directory.
+ * img/thumbs/: thumbnails.  
+
+game/supervisor/index.php		(Administration interface)
+ * A big mess that I'll clean up soon :(
+
+game/supervisor/promote.php		(Form processor - supervisor/index.php)
+ * Form handler that allows game admin to promote/demote players.
+
+game/supervisor/uploader-new.php	(Form processor - supervisor/index.php)
+ * Form handler that accepts uploads of new artwork and places them in the works database.
+
+
